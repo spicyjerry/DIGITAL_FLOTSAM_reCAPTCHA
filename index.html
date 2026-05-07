@@ -461,6 +461,9 @@ function startNewRound() {
     : shuffle(allImages).slice(0, Math.min(9, allImages.length));
   preloadedImages = [];
 
+  const pool = KEYWORDS.filter(k => k !== currentKeyword);
+  currentKeyword = pool[Math.floor(Math.random() * pool.length)];
+ 
   document.getElementById('main-screen').style.display = 'block';
   document.getElementById('thanks-screen').classList.remove('active');
   document.getElementById('header-keyword').textContent = currentKeyword;
