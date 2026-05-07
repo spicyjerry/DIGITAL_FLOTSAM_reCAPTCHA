@@ -541,20 +541,19 @@ async function handleSubmit(noneApply = false) {
     shown_count:  currentImages.length,
   };
 
+  // Show thank you immediately — don't wait for the network
+  showThanks(payload.tagged_count, noneApply);
+
+  // Send data in the background
   if (SCRIPT_URL) {
-    try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-    } catch(e) { console.warn('Submit error:', e); }
+    fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch(e => console.warn('Submit error:', e));
   } else {
     console.log('[Demo] Submission:', payload);
-    await new Promise(r => setTimeout(r, 400));
   }
-
-  showThanks(payload.tagged_count, noneApply);
 }
 
 let preloadedImages = [];
