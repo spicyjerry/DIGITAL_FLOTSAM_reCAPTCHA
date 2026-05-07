@@ -456,10 +456,10 @@ function startNewRound() {
   selected.clear();
   submitting = false;
 
-  currentImages = shuffle(allImages).slice(0, Math.min(9, allImages.length));
-
-  const pool    = KEYWORDS.filter(k => k !== currentKeyword);
-  currentKeyword = pool[Math.floor(Math.random() * pool.length)];
+  currentImages = preloadedImages.length > 0
+    ? preloadedImages
+    : shuffle(allImages).slice(0, Math.min(9, allImages.length));
+  preloadedImages = [];
 
   document.getElementById('main-screen').style.display = 'block';
   document.getElementById('thanks-screen').classList.remove('active');
@@ -557,6 +557,17 @@ async function handleSubmit(noneApply = false) {
   showThanks(payload.tagged_count, noneApply);
 }
 
+let preloadedImages = [];
+
+function preloadNextRound() {
+  const nextImages = shuffle(allImages).slice(0, Math.min(9, allImages.length));
+  preloadedImages = nextImages;
+  nextImages.forEach(img => {
+    const image = new Image();
+    image.src = img.url;
+  });
+}
+
 function showThanks(n, noneApply) {
   document.getElementById('main-screen').style.display = 'none';
   const screen = document.getElementById('thanks-screen');
@@ -565,8 +576,10 @@ function showThanks(n, noneApply) {
     (noneApply || n === 0)
       ? `No images matched <strong>${currentKeyword}</strong>.`
       : `${n} image${n > 1 ? 's' : ''} tagged as <strong>${currentKeyword}</strong>.`;
+  
+  // Silently preload next round while user reads the thank you screen
+  preloadNextRound();
 }
-
 // ── Boot ──────────────────────────────────────────────
 
 (async () => {
