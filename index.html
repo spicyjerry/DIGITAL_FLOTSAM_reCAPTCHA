@@ -539,7 +539,9 @@ async function handleSubmit(noneApply = false) {
     timestamp:   new Date().toISOString(),
     keyword:     currentKeyword,
     shown:       currentImages.map(i => i.id).join(','),
+    shownNames:  currentImages.map(i => i.name).join(','),
     tagged:      noneApply ? '' : [...selected].join(','),
+    taggedNames: noneApply ? '' : [...selected].map(id => currentImages.find(i => i.id === id)?.name || id).join(','),
     tagged_count: noneApply ? 0 : selected.size,
     shown_count:  currentImages.length,
   };
